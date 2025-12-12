@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const remDisplay = document.getElementById('remainingDisplay');
     const inputs = document.querySelectorAll('.amount-input');
     const boxes = document.querySelectorAll('.drop-box');
-    const revealBtn = document.getElementById('btnReveal');
+    const labels = document.querySelectorAll('.box-label'); // Select the letters
     const nextBtn = document.getElementById('btnNext');
     const resetBtn = document.getElementById('btnReset');
     const startAmountInput = document.getElementById('startAmount');
@@ -41,12 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (remaining < 0) {
             remDisplay.style.color = "red";
             remDisplay.innerText = "OVER LIMIT! Remove " + Math.abs(remaining).toLocaleString();
-            revealBtn.disabled = true;
-            revealBtn.style.backgroundColor = "#555";
+            // Disable interaction with letters if over limit
+            labels.forEach(label => label.style.cursor = "not-allowed");
         } else {
-            remDisplay.style.color = "#ffcc00";
-            revealBtn.disabled = false;
-            revealBtn.style.backgroundColor = "#ff9800";
+            remDisplay.style.color = "#FFC300";
+            // Enable interaction
+            labels.forEach(label => label.style.cursor = "pointer");
         }
         
         // Highlight active boxes
@@ -58,22 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 box.classList.remove('active');
             }
         });
+
+        return remaining; // Return for check in click handler
     }
 
-    function revealAnswer() {
+    function revealAnswer(winningLetter) {
         // Stop interaction
         gameActive = false;
-        const correctBoxValue = document.getElementById('correctAnswer').value; // A, B, C, or D
         
         // Lock inputs
         inputs.forEach(input => input.disabled = true);
+        
+        // Disable letter clicks visually
+        labels.forEach(label => label.style.cursor = 'default');
 
         // Check winners and losers
         boxes.forEach(box => {
             const boxLetter = box.querySelector('.box-label').innerText;
             const inputVal = parseInt(box.querySelector('input').value) || 0;
 
-            if (boxLetter === correctBoxValue) {
+            if (boxLetter === winningLetter) {
                 // This box is safe
                 box.classList.add('winner');
                 currentTotal = inputVal;
@@ -86,8 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Total Money Display
         totalDisplay.innerText = currentTotal.toLocaleString();
         
-        // Toggle buttons
-        revealBtn.style.display = 'none';
+        // Show Next Button
         nextBtn.style.display = 'block';
 
         // Check for Game Over
@@ -115,9 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
             input.disabled = false;
         });
 
-        // Reset buttons
-        revealBtn.style.display = 'block';
+        // Reset buttons and interaction
         nextBtn.style.display = 'none';
+        labels.forEach(label => label.style.cursor = "pointer");
         
         updateAllocation(); 
     }
@@ -127,23 +130,41 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTotal = parseInt(startVal) || 1000000;
         totalDisplay.innerText = currentTotal.toLocaleString();
         
-        // Ensure buttons are in correct state
         nextBtn.style.display = 'none';
-        revealBtn.style.display = 'block';
-        revealBtn.disabled = false;
-        
         nextRound();
     }
 
     // --- Event Listeners ---
     
-    // Attach input listeners
+    // 1. Input listeners
     inputs.forEach(input => {
         input.addEventListener('input', updateAllocation);
     });
 
-    // Attach button listeners
-    revealBtn.addEventListener('click', revealAnswer);
+    // 2. Letter Click Listeners (The new Host Control)
+    labels.forEach(label => {
+        label.addEventListener('click', (e) => {
+            if(!gameActive) return;
+
+            // Check if money allocation is valid before allowing drop
+            const remaining = currentTotal - (parseInt(allocDisplay.innerText.replace(/,/g, '')) || 0);
+            if(remaining < 0) {
+                alert("Cannot reveal: Too much money allocated!");
+                return;
+            }
+
+            const clickedLetter = e.target.innerText;
+
+            // Safety Confirm Dialog
+            const confirmDrop = confirm(`Is answer ${clickedLetter} correct? \n\nClick OK to LOCK IN and DROP the others.`);
+            
+            if (confirmDrop) {
+                revealAnswer(clickedLetter);
+            }
+        });
+    });
+
+    // 3. Button listeners
     nextBtn.addEventListener('click', nextRound);
     resetBtn.addEventListener('click', resetGame);
 
