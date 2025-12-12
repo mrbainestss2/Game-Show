@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Mr Baines Game Show</title>
+    <style>
+        :root {
+            /* New color palette based on banner.png */
+            --primary: #FFD700; /* Gold for accents */
+            --bg: #2E0854; /* Deep Purple for background */
+            --box-bg: #4A1D66; /* A lighter, reddish-purple for boxes */
+            --correct: #2ECC71; /* Keep a vibrant green for correct */
+            --wrong: #C70039; /* A deep red from the sign text */
+            --text-dark: #2E0854;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            /* Add a subtle gradient for more depth, matching the stage */
+            background-image: linear-gradient(to bottom, var(--bg), #1a0530);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Header & Info */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header-banner {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold glow */
+            margin-bottom: 20px;
+        }
+
+        .balance-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Stronger gold shadow */
+            margin: 10px 0;
+        }
+
+        .status-bar {
+            background: #333;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .remaining-msg {
+            color: #FFC300; /* Gold for the remaining message */
+        }
+
+        /* Game Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        .drop-box {
+            background-color: var(--box-bg);
+            border: 3px solid #5A2D76; /* A slightly different border color */
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .drop-box.active { border-color: var(--primary); box-shadow: 0 0 15px var(--primary); }
+        .drop-box.winner { border-color: var(--correct); background-color: rgba(46, 204, 113, 0.2); }
+        .drop-box.loser { border-color: var(--wrong); background-color: rgba(199, 0, 57, 0.2); opacity: 0.7; }
+
+        .box-label {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: var(--primary); /* Label in gold */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .amount-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            background: #2E0854; /* Darker input background */
+            border: 2px solid #5A2D76;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .amount-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 5px var(--primary);
+        }
+
+        /* Controls */
+        .controls {
+            background: #3D1E2F; /* Match box-bg */
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 800px;
+            border-top: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #5A2D76;
+        }
+
+        h3 { margin-top: 0; color: var(--primary); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-reveal {
+            background-color: var(--primary);
+            color: var(--text-dark);
+            width: 100%;
+            box-shadow: 0 4px 0 #c7a000; /* 3D effect */
+        }
+        .btn-reveal:hover { background-color: #ffea00; box-shadow: 0 2px 0 #c7a000; transform: translateY(2px); }
+        
+        .btn-reveal:disabled {
+            background-color: #555;
+            color: #aaa;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-next {
+            background-color: var(--correct);
+            color: white;
+            display: none;
+            width: 100%;
+            box-shadow: 0 4px 0 #27ae60;
+        }
+        .btn-next:hover { background-color: #2ecc71; box-shadow: 0 2px 0 #27ae60; transform: translateY(2px); }
+        
+        .btn-reset {
+            background-color: var(--wrong);
+            color: white;
+            margin-top: 10px;
+            box-shadow: 0 4px 0 #900028;
+        }
+        .btn-reset:hover { background-color: #e74c3c; box-shadow: 0 2px 0 #900028; transform: translateY(2px); }
+
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        /* Host Panel */
+        select, #startAmount {
+            padding: 10px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            background: #2E0854;
+            color: white;
+            border: 2px solid #5A2D76;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="banner.png" alt="The Great Mr Baines Game Show" class="header-banner">
+        <div class="balance-display">$<span id="totalMoney">1000000</span></div>
+        <div class="status-bar">
+            <span>Allocated: <span id="allocatedDisplay">0</span></span>
+            <span class="remaining-msg" id="remainingDisplay">Remaining: 1000000</span>
+        </div>
+    </header>
+
+    <div class="grid-container">
+        <div class="drop-box" id="box-A">
+            <span class="box-label">A</span>
+            <input type="number" class="amount-input" placeholder="0">
+        </div>
+
+        <div class="drop-box" id="box-B">
+            <span class="box-label">B</span>
+            <input type="number" class="amount-input" placeholder="0">
+        </div>
+
+        <div class="drop-box" id="box-C">
+            <span class="box-label">C</span>
+            <input type="number" class="amount-input" placeholder="0">
+        </div>
+
+        <div class="drop-box" id="box-D">
+            <span class="box-label">D</span>
+            <input type="number" class="amount-input" placeholder="0">
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <h3>HOST CONTROLS</h3>
+            <label for="correctAnswer">Select Correct Answer:</label>
+            <select id="correctAnswer">
+                <option value="A">Box A</option>
+                <option value="B">Box B</option>
+                <option value="C">Box C</option>
+                <option value="D">Box D</option>
+            </select>
+        </div>
+
+        <button class="btn-reveal" id="btnReveal">LOCK IN & REVEAL</button>
+        <button class="btn-next" id="btnNext">START NEXT ROUND</button>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #5A2D76; padding-top: 10px;">
+            <label>Set New Game Amount:</label>
+            <input type="number" id="startAmount" value="1000000" style="padding: 5px;">
+            <button class="btn-reset" id="btnReset">NEW GAME</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
