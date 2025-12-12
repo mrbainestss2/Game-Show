@@ -6,19 +6,17 @@
     <title>The Great Mr Baines Game Show</title>
     <style>
         :root {
-            /* New color palette based on banner.png */
-            --primary: #FFD700; /* Gold for accents */
-            --bg: #2E0854; /* Deep Purple for background */
-            --box-bg: #4A1D66; /* A lighter, reddish-purple for boxes */
-            --correct: #2ECC71; /* Keep a vibrant green for correct */
-            --wrong: #C70039; /* A deep red from the sign text */
+            --primary: #FFD700;
+            --bg: #2E0854;
+            --box-bg: #4A1D66;
+            --correct: #2ECC71;
+            --wrong: #C70039;
             --text-dark: #2E0854;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
-            /* Add a subtle gradient for more depth, matching the stage */
             background-image: linear-gradient(to bottom, var(--bg), #1a0530);
             color: white;
             margin: 0;
@@ -29,7 +27,7 @@
             min-height: 100vh;
         }
 
-        /* Header & Info */
+        /* Header */
         header {
             text-align: center;
             margin-bottom: 20px;
@@ -41,7 +39,7 @@
             width: 100%;
             height: auto;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold glow */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
             margin-bottom: 20px;
         }
 
@@ -49,7 +47,7 @@
             font-size: 3rem;
             font-weight: bold;
             color: var(--primary);
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* Stronger gold shadow */
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             margin: 10px 0;
         }
 
@@ -63,9 +61,7 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
 
-        .remaining-msg {
-            color: #FFC300; /* Gold for the remaining message */
-        }
+        .remaining-msg { color: #FFC300; }
 
         /* Game Grid */
         .grid-container {
@@ -79,7 +75,7 @@
 
         .drop-box {
             background-color: var(--box-bg);
-            border: 3px solid #5A2D76; /* A slightly different border color */
+            border: 3px solid #5A2D76;
             border-radius: 15px;
             padding: 20px;
             text-align: center;
@@ -92,13 +88,26 @@
         .drop-box.winner { border-color: var(--correct); background-color: rgba(46, 204, 113, 0.2); }
         .drop-box.loser { border-color: var(--wrong); background-color: rgba(199, 0, 57, 0.2); opacity: 0.7; }
 
+        /* Updated Box Label for Clickability */
         .box-label {
             font-size: 2rem;
             font-weight: bold;
-            display: block;
+            display: inline-block; /* Changed to inline-block for hover effect */
             margin-bottom: 10px;
-            color: var(--primary); /* Label in gold */
+            color: var(--primary);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            cursor: pointer; /* Indicates it can be clicked */
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        /* Hover effect for the host to know what they are clicking */
+        .box-label:hover {
+            background-color: rgba(255, 215, 0, 0.1);
+            border-color: var(--primary);
+            transform: scale(1.1);
         }
 
         .amount-input {
@@ -106,7 +115,7 @@
             padding: 10px;
             font-size: 1.5rem;
             text-align: center;
-            background: #2E0854; /* Darker input background */
+            background: #2E0854;
             border: 2px solid #5A2D76;
             color: white;
             border-radius: 5px;
@@ -120,7 +129,7 @@
 
         /* Controls */
         .controls {
-            background: #3D1E2F; /* Match box-bg */
+            background: #3D1E2F;
             padding: 20px;
             border-radius: 10px;
             width: 100%;
@@ -128,14 +137,6 @@
             border-top: 4px solid var(--primary);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-
-        .control-group {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #5A2D76;
-        }
-
-        h3 { margin-top: 0; color: var(--primary); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 
         button {
             padding: 12px 24px;
@@ -146,21 +147,6 @@
             font-weight: bold;
             transition: all 0.2s;
             text-transform: uppercase;
-        }
-
-        .btn-reveal {
-            background-color: var(--primary);
-            color: var(--text-dark);
-            width: 100%;
-            box-shadow: 0 4px 0 #c7a000; /* 3D effect */
-        }
-        .btn-reveal:hover { background-color: #ffea00; box-shadow: 0 2px 0 #c7a000; transform: translateY(2px); }
-        
-        .btn-reveal:disabled {
-            background-color: #555;
-            color: #aaa;
-            cursor: not-allowed;
-            box-shadow: none;
         }
 
         .btn-next {
@@ -180,12 +166,9 @@
         }
         .btn-reset:hover { background-color: #e74c3c; box-shadow: 0 2px 0 #900028; transform: translateY(2px); }
 
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-        }
-
-        /* Host Panel */
-        select, #startAmount {
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        
+        #startAmount {
             padding: 10px;
             font-size: 1.1rem;
             border-radius: 5px;
@@ -229,21 +212,13 @@
     </div>
 
     <div class="controls">
-        <div class="control-group">
-            <h3>HOST CONTROLS</h3>
-            <label for="correctAnswer">Select Correct Answer:</label>
-            <select id="correctAnswer">
-                <option value="A">Box A</option>
-                <option value="B">Box B</option>
-                <option value="C">Box C</option>
-                <option value="D">Box D</option>
-            </select>
+        <div style="text-align: center; color: #aaa; margin-bottom: 15px;">
+            <em>Host: Click a letter (A, B, C, D) above to reveal the answer.</em>
         </div>
 
-        <button class="btn-reveal" id="btnReveal">LOCK IN & REVEAL</button>
         <button class="btn-next" id="btnNext">START NEXT ROUND</button>
         
-        <div style="margin-top: 30px; border-top: 1px solid #5A2D76; padding-top: 10px;">
+        <div style="margin-top: 20px; border-top: 1px solid #5A2D76; padding-top: 15px;">
             <label>Set New Game Amount:</label>
             <input type="number" id="startAmount" value="1000000" style="padding: 5px;">
             <button class="btn-reset" id="btnReset">NEW GAME</button>
@@ -252,5 +227,4 @@
 
     <script src="game.js"></script>
 </body>
-
 </html>
