@@ -226,3 +226,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // We can start it immediately if desired, or wait for the modal close.
 });
 
+
