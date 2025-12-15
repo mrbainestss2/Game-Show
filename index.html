@@ -96,12 +96,22 @@
 
     <script src="game.js"></script>
     <script>
+        // 1. Setup the music object globally
+        const bgMusic = new Audio('./sounds/background.mp3');
+        bgMusic.loop = true;   // Make it repeat forever
+        bgMusic.volume = 0.2;  // Keep it quiet (20% volume) so it doesn't drown out sound effects
+
         function closeModal() {
+            // 2. Hide the modal
             document.getElementById('introModal').style.display = 'none';
-            // Start the background music if you have it
-            // new Audio('sounds/background.mp3').play(); 
+            
+            // 3. Start the music
+            bgMusic.play().catch(e => {
+                console.log("Audio play failed. User interaction needed.", e);
+            });
         }
     </script>
 </body>
 </html>
+
 
