@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ROUND_TIME = 60; // Seconds per round
 
     // --- Audio Setup (Uncomment if you add files) ---
-    // const soundDrop = new Audio('sounds/drop.mp3');
-    // const soundWin = new Audio('sounds/win.mp3');
+    const soundDrop = new Audio('sounds/drop.mp3');
+    const soundWin = new Audio('sounds/win.mp3');
     
     // --- DOM Elements ---
     const totalDisplay = document.getElementById('totalMoney');
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // LOSER - DROP!
                 if (inputVal > 0) {
                     box.classList.add('loser'); // Triggers CSS Drop Animation
-                    // soundDrop.play(); // Play sound
+                    soundDrop.play(); // Play sound
                 } else {
                     box.style.opacity = '0.3'; // Fade out empty boxes
                 }
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger Confetti if they kept money!
             if (winAmount > 0 && typeof confetti === 'function') {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                // soundWin.play();
+                soundWin.play();
             }
         }
     }
@@ -225,3 +225,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Note: Timer starts when "Next Round" or "New Game" is clicked, or manual start.
     // We can start it immediately if desired, or wait for the modal close.
 });
+
