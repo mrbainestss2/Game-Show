@@ -4,188 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Great Mr Baines Game Show</title>
-    <style>
-        :root {
-            --primary: #FFD700;
-            --bg: #2E0854;
-            --box-bg: #4A1D66;
-            --correct: #2ECC71;
-            --wrong: #C70039;
-            --text-dark: #2E0854;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            background-image: linear-gradient(to bottom, var(--bg), #1a0530);
-            color: white;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .header-banner {
-            width: 100%;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            margin-bottom: 20px;
-        }
-
-        .balance-display {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-            margin: 10px 0;
-        }
-
-        .status-bar {
-            background: #333;
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .remaining-msg { color: #FFC300; }
-
-        /* Game Grid */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 30px;
-        }
-
-        .drop-box {
-            background-color: var(--box-bg);
-            border: 3px solid #5A2D76;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-
-        .drop-box.active { border-color: var(--primary); box-shadow: 0 0 15px var(--primary); }
-        .drop-box.winner { border-color: var(--correct); background-color: rgba(46, 204, 113, 0.2); }
-        .drop-box.loser { border-color: var(--wrong); background-color: rgba(199, 0, 57, 0.2); opacity: 0.7; }
-
-        /* Updated Box Label for Clickability */
-        .box-label {
-            font-size: 2rem;
-            font-weight: bold;
-            display: inline-block; /* Changed to inline-block for hover effect */
-            margin-bottom: 10px;
-            color: var(--primary);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            cursor: pointer; /* Indicates it can be clicked */
-            padding: 5px 15px;
-            border-radius: 5px;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-
-        /* Hover effect for the host to know what they are clicking */
-        .box-label:hover {
-            background-color: rgba(255, 215, 0, 0.1);
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
-
-        .amount-input {
-            width: 80%;
-            padding: 10px;
-            font-size: 1.5rem;
-            text-align: center;
-            background: #2E0854;
-            border: 2px solid #5A2D76;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .amount-input:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 5px var(--primary);
-        }
-
-        /* Controls */
-        .controls {
-            background: #3D1E2F;
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 800px;
-            border-top: 4px solid var(--primary);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        button {
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-
-        .btn-next {
-            background-color: var(--correct);
-            color: white;
-            display: none;
-            width: 100%;
-            box-shadow: 0 4px 0 #27ae60;
-        }
-        .btn-next:hover { background-color: #2ecc71; box-shadow: 0 2px 0 #27ae60; transform: translateY(2px); }
-        
-        .btn-reset {
-            background-color: var(--wrong);
-            color: white;
-            margin-top: 10px;
-            box-shadow: 0 4px 0 #900028;
-        }
-        .btn-reset:hover { background-color: #e74c3c; box-shadow: 0 2px 0 #900028; transform: translateY(2px); }
-
-        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-        
-        #startAmount {
-            padding: 10px;
-            font-size: 1.1rem;
-            border-radius: 5px;
-            background: #2E0854;
-            color: white;
-            border: 2px solid #5A2D76;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
+    <div id="introModal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to The Drop!</h2>
+            <p>You have <strong>$1,000,000</strong>.</p>
+            <p>1. Move your money onto the answers you think are correct.</p>
+            <p>2. You must leave at least one trapdoor empty!</p>
+            <p>3. When ready, the Host will click the correct letter to reveal the answer.</p>
+            <button class="btn-start" onclick="closeModal()">LET'S PLAY!</button>
+        </div>
+    </div>
+
     <header>
-        <img src="banner.jpg" alt="The Great Mr Baines Game Show" class="header-banner">
+        <img src="banner.png" alt="The Great Mr Baines Game Show" class="header-banner">
+        
+        <div class="timer-container">
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+
         <div class="balance-display">$<span id="totalMoney">1000000</span></div>
         <div class="status-bar">
             <span>Allocated: <span id="allocatedDisplay">0</span></span>
-            <span class="remaining-msg" id="remainingDisplay">Remaining: 1000000</span>
+            <span class="remaining-msg" id="remainingDisplay">Remaining: 1,000,000</span>
         </div>
     </header>
 
@@ -193,27 +38,51 @@
         <div class="drop-box" id="box-A">
             <span class="box-label">A</span>
             <input type="number" class="amount-input" placeholder="0">
+            <div class="quick-add">
+                <button data-amt="25000">+25k</button>
+                <button data-amt="100000">+100k</button>
+                <button class="btn-all-in">ALL</button>
+                <button class="btn-clear">X</button>
+            </div>
         </div>
 
         <div class="drop-box" id="box-B">
             <span class="box-label">B</span>
             <input type="number" class="amount-input" placeholder="0">
+            <div class="quick-add">
+                <button data-amt="25000">+25k</button>
+                <button data-amt="100000">+100k</button>
+                <button class="btn-all-in">ALL</button>
+                <button class="btn-clear">X</button>
+            </div>
         </div>
 
         <div class="drop-box" id="box-C">
             <span class="box-label">C</span>
             <input type="number" class="amount-input" placeholder="0">
+            <div class="quick-add">
+                <button data-amt="25000">+25k</button>
+                <button data-amt="100000">+100k</button>
+                <button class="btn-all-in">ALL</button>
+                <button class="btn-clear">X</button>
+            </div>
         </div>
 
         <div class="drop-box" id="box-D">
             <span class="box-label">D</span>
             <input type="number" class="amount-input" placeholder="0">
+            <div class="quick-add">
+                <button data-amt="25000">+25k</button>
+                <button data-amt="100000">+100k</button>
+                <button class="btn-all-in">ALL</button>
+                <button class="btn-clear">X</button>
+            </div>
         </div>
     </div>
 
     <div class="controls">
         <div style="text-align: center; color: #aaa; margin-bottom: 15px;">
-            <em>Host: Click a letter (A, B, C, D) above to reveal the answer.</em>
+            <em>Host: Click a letter above to reveal the answer.</em>
         </div>
 
         <button class="btn-next" id="btnNext">START NEXT ROUND</button>
@@ -226,5 +95,12 @@
     </div>
 
     <script src="game.js"></script>
+    <script>
+        function closeModal() {
+            document.getElementById('introModal').style.display = 'none';
+            // Start the background music if you have it
+            // new Audio('sounds/background.mp3').play(); 
+        }
+    </script>
 </body>
 </html>
